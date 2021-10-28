@@ -26,7 +26,7 @@ yellow=(255, 255, 0)
 
 font = "fonts\Retro.ttf"
 
-bg = pygame.image.load("imagens\menu-image.jpg")
+bg = pygame.image.load("imagens\menu.jpg")
 bg = pygame.transform.scale(bg, (800, 600))
 
 menu_music = 'Sounds\Take-on-me.ogg'
@@ -90,19 +90,19 @@ def main_menu():
 
 
         if selected=="Iniciar":
-            text_start=text_format("Iniciar", font, 75, yellow)
+            text_start=text_format("Iniciar", font, 75, red)
         else:
             text_start = text_format("Iniciar", font, 75, white)
         if selected==som_menu:
-            text_sound=text_format(som_menu, font, 75, yellow)
+            text_sound=text_format(som_menu, font, 75, red)
         else:
             text_sound = text_format(som_menu, font, 75, white)    
         if selected=="Sair":
-            text_quit=text_format("Sair", font, 75, yellow)
+            text_quit=text_format("Sair", font, 75, red)
         else:
             text_quit = text_format("Sair", font, 75, white)
         if selected=="Rank":
-            text_rank=text_format("Rank", font, 75, yellow)
+            text_rank=text_format("Rank", font, 75, red)
         else:
             text_rank = text_format("Rank", font, 75, white)
 
@@ -111,10 +111,10 @@ def main_menu():
         rank_rect=text_rank.get_rect()
         sound_rect=text_sound.get_rect()
 
-        screen.blit(text_start, (screen_width/2 - (-180), 250))
-        screen.blit(text_quit, (screen_width/2 - (-180), 400))
-        screen.blit(text_sound, (screen_width/2 - (-180), 300))
-        screen.blit(text_rank, (screen_width/2 - (-180), 350))
+        screen.blit(text_start, (screen_width/2 - (-180), 200))
+        screen.blit(text_quit, (screen_width/2 - (-180), 350))
+        screen.blit(text_sound, (screen_width/2 - (-180), 250))
+        screen.blit(text_rank, (screen_width/2 - (-180), 300))
         pygame.display.update()
         clock.tick(FPS)
         pygame.display.set_caption("Uma Aventura Espacial")
