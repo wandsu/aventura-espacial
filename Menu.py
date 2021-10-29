@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
 import os
+from Players import *
+import csv
 
 pygame.init()
 
@@ -26,14 +28,155 @@ yellow=(255, 255, 0)
 
 font = "fonts\Retro.ttf"
 
-bg = pygame.image.load("imagens\menu.jpg")
-bg = pygame.transform.scale(bg, (800, 600))
+bg_menu = pygame.image.load("imagens\menu.jpg")
+bg_menu = pygame.transform.scale(bg_menu, (800, 600))
 
 menu_music = 'Sounds\Take-on-me.ogg'
 
 clock = pygame.time.Clock()
 FPS=30
 
+#  ints
+fill = 0
+num = 0
+CameraX = 0
+attempts = 0
+coins = 0
+angle = 0
+
+# bg image
+bg = pygame.image.load(os.path.join("Imagens", "bg.png"))
+
+#definindo elementos do jogo
+player_sprite = pygame.sprite.Group()
+elements = pygame.sprite.Group()
+lava = pygame.image.load(os.path.join("Imagens", "Lava.png"))
+lava = pygame.transform.smoothscale(lava, (32,32))
+coin = pygame.image.load(os.path.join("Imagens", "coin.png"))
+coin = pygame.transform.smoothscale(coin, (32, 32))
+bloco1 = pygame.image.load(os.path.join("Imagens", "Deserto1.png"))
+bloco1 = pygame.transform.smoothscale(bloco1, (32, 32))
+bloco2 = pygame.image.load(os.path.join("Imagens", "Deserto1.png"))
+bloco2 = pygame.transform.smoothscale(bloco2, (32, 32))
+
+## definindo sprites do jogador
+sprites = pygame.sprite.Group()
+jogador = Player(elements, (150, 150), player_sprite)
+sprites.add(jogador)
+
+
+#carrega mapa do jogo
+def carrega_mapa(map):
+    x = 0
+    y = 0
+
+    for row in map:
+        for col in row:
+
+            if col == "0":
+                Platform1(bloco1, (x, y), elements)
+            if col == "1":
+                Platform2(bloco2, (x,y), elements)
+
+            if col == "Coin":
+                Coin(coin, (x, y), elements)
+
+            if col == "Lava":
+                Lava(lava, (x, y), elements)
+
+            if col == "End":
+                End(jogador.image, (x, y), elements)
+            x += 32
+        y += 32
+        x = 0
+
+def vitoria():
+    return 0
+
+def derrota():
+    return 1
+
+def block_map(level_num):
+    lvl = []
+    with open(level_num, newline='') as csvfile:
+        trash = csv.reader(csvfile, delimiter=',', quotechar='"')
+        for row in trash:
+            lvl.append(row)
+    return lvl
+
+def reset():
+    global jogador, elements, player_sprite, level
+
+    if level == 1:
+        pygame.mixer.music.load(os.path.join("Sounds", "Eletro-hits.ogg"))
+    pygame.mixer_music.play()
+    player_sprite = pygame.sprite.Group()
+    elements = pygame.sprite.Group()
+    jogador = Player(elements, (150, 150), player_sprite)
+    carrega_mapa(
+            block_map(
+                    level_num=levels[level]))
+
+def move_map():
+    for sprite in elements:
+        sprite.rect.x -= CameraX
+
+
+
+
+
+#inicio do jogo
+def game():
+    global CameraX
+    while True:
+        keys = pygame.key.get_pressed()
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                exit()
+
+        sprites.draw(screen)
+        sprites.update()
+
+        #
+        jogador.vel.x = 5 
+
+        if keys[pygame.K_UP] or keys[pygame.K_SPACE]:
+            jogador.isjump = True
+
+
+        CameraX = jogador.vel.x  # for moving obstacles
+        move_map()  # apply CameraX to all elements
+
+        screen.blit(bg, (0, 0))  # Clear the screen(with the bg)
+
+
+        player_sprite.draw(screen)  # draw player sprite group
+        elements.draw(screen)  # draw all other obstacles
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    """User friendly exit"""
+                    done = True
+                if event.key == pygame.K_2:
+                    """change level by keypad"""
+                    jogador.jump_amount += 1
+
+                if event.key == pygame.K_1:
+                    """change level by keypad"""
+
+                    jogador.jump_amount -= 1
+
+
+        #
+        clock.tick(60)
+        pygame.display.update()    
+
+
+#menu
 def main_menu():
 
     menu=True
@@ -59,7 +202,7 @@ def main_menu():
                     menu_estados += 1
                 if event.key==pygame.K_RETURN:
                     if selected=="Iniciar":
-                        print("Iniciar")
+                        game()
                     if selected == som_menu:
                         i+=1
                         print(i)
@@ -74,7 +217,7 @@ def main_menu():
                         pygame.quit()
                         quit()
 
-        screen.blit(bg, (0, 0))
+        screen.blit(bg_menu, (0, 0))
         if menu_estados < 0:
             menu_estados = 3
         if menu_estados > 3:
@@ -118,6 +261,17 @@ def main_menu():
         pygame.display.update()
         clock.tick(FPS)
         pygame.display.set_caption("Uma Aventura Espacial")
+
+#globais
+
+#nivel
+level_num = 1
+level = 0
+levels = ["level_1.csv", "level_2.csv"]
+level_list = block_map(levels[level])
+level_width = (len(level_list[0]) * 32)
+level_height = len(level_list) * 32
+carrega_mapa(level_list)
 
 main_menu()
 pygame.quit()
