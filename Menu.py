@@ -46,17 +46,20 @@ angle = 0
 
 # bg image
 bg = pygame.image.load(os.path.join("Imagens", "bg.png"))
+bg = pygame.transform.scale(bg,(800,600))
 
 #definindo elementos do jogo
 player_sprite = pygame.sprite.Group()
 elements = pygame.sprite.Group()
 lava = pygame.image.load(os.path.join("Imagens", "Lava.png"))
 lava = pygame.transform.smoothscale(lava, (32,32))
+end = pygame.image.load(os.path.join("Imagens", "red-end.png"))
+#end = pygame.transform.smoothscale(end, (290,570))
 coin = pygame.image.load(os.path.join("Imagens", "coin.png"))
 coin = pygame.transform.smoothscale(coin, (32, 32))
 bloco1 = pygame.image.load(os.path.join("Imagens", "Deserto1.png"))
 bloco1 = pygame.transform.smoothscale(bloco1, (32, 32))
-bloco2 = pygame.image.load(os.path.join("Imagens", "Deserto1.png"))
+bloco2 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 2.png"))
 bloco2 = pygame.transform.smoothscale(bloco2, (32, 32))
 
 ## definindo sprites do jogador
@@ -85,7 +88,7 @@ def carrega_mapa(map):
                 Lava(lava, (x, y), elements)
 
             if col == "End":
-                End(jogador.image, (x, y), elements)
+                End(end, (x, y), elements)
             x += 32
         y += 32
         x = 0
@@ -145,28 +148,25 @@ def game():
             jogador.isjump = True
 
 
-        CameraX = jogador.vel.x  # for moving obstacles
-        move_map()  # apply CameraX to all elements
+        CameraX = jogador.vel.x  
+        move_map()  
 
-        screen.blit(bg, (0, 0))  # Clear the screen(with the bg)
+        screen.blit(bg, (0, 0))  
 
 
-        player_sprite.draw(screen)  # draw player sprite group
-        elements.draw(screen)  # draw all other obstacles
+        player_sprite.draw(screen)  
+        elements.draw(screen) 
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    """User friendly exit"""
                     done = True
                 if event.key == pygame.K_2:
-                    """change level by keypad"""
                     jogador.jump_amount += 1
 
                 if event.key == pygame.K_1:
-                    """change level by keypad"""
 
                     jogador.jump_amount -= 1
 
