@@ -1,30 +1,22 @@
+import os
+import csv
 import pygame
 from pygame.locals import *
-import os
+
 from Players import *
-import csv
 
 pygame.init()
 
-os.environ['SDL_VIDEO_CENTERED'] = '1'
+#Remove
+#os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 screen_width=800
 screen_height=600
 screen=pygame.display.set_mode((screen_width, screen_height))
 
-def text_format(message, textFont, textSize, textColor):
-    newFont=pygame.font.Font(textFont, textSize)
-    newText=newFont.render(message, 0, textColor)
-
-    return newText
 
 white=(255, 255, 255)
-black=(0, 0, 0)
-gray=(50, 50, 50)
 red=(255, 0, 0)
-green=(0, 255, 0)
-blue=(0, 0, 255)
-yellow=(255, 255, 0)
 
 font = "fonts\Retro.ttf"
 
@@ -39,6 +31,7 @@ FPS=30
 #  ints
 fill = 0
 num = 0
+
 CameraX = 0
 attempts = 0
 coins = 0
@@ -67,6 +60,12 @@ sprites = pygame.sprite.Group()
 jogador = Player(elements, (150, 150), player_sprite)
 sprites.add(jogador)
 
+
+def text_format(message, textFont, textSize, textColor):
+    newFont=pygame.font.Font(textFont, textSize)
+    newText=newFont.render(message, 0, textColor)
+
+    return newText
 
 #carrega mapa do jogo
 def carrega_mapa(map):
@@ -124,13 +123,11 @@ def move_map():
     for sprite in elements:
         sprite.rect.x -= CameraX
 
-
-
-
-
+atualiza_sprite = 0
 #inicio do jogo
 def game():
     global CameraX
+    global atualiza_sprite
     while True:
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
@@ -139,6 +136,12 @@ def game():
                 exit()
 
         sprites.draw(screen)
+
+        #atualiza sprite após 4 loops se o jogador não estiver pulando
+        atualiza_sprite += 1
+        if atualiza_sprite % 4 == 0 and not jogador.isjump:
+            jogador.sprite_update()
+
         sprites.update()
 
         #

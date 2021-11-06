@@ -17,25 +17,12 @@ class Player(pygame.sprite.Sprite):
         super().__init__(*groups)
         self.sprites = []
         self.sprites.append(pygame.image.load('Imagens/Mark1.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark1.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark1.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark1.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark1.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
         self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
         self.sprites.append(pygame.image.load('Imagens/Mark3.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark3.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark3.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark3.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark3.png'))
         self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
-        self.sprites.append(pygame.image.load('Imagens/Mark2.png'))
+
+        self.jumping = pygame.image.load('Imagens/Mark4.png')
+
         self.platforms = platforms
         self.onGround = False
         self.isRunning = False
@@ -50,11 +37,18 @@ class Player(pygame.sprite.Sprite):
     
     def jump(self):
         self.vel.y = -self.jump_amount  
+        
+        self.image = self.jumping
+        self.image = pygame.transform.scale(self.image, (64,64)) 
+
+    #Adicionei essa função para separar a atualização do sprite do movimento do jogador
+    def sprite_update(self):
+        self.atual = self.atual +1
+        self.image = self.sprites[self.atual%4]
+        self.image = pygame.transform.scale(self.image, (64,64)) 
+
 
     def update(self):
-        self.atual = self.atual +1
-        self.image = self.sprites[self.atual%20]
-        self.image = pygame.transform.scale(self.image, (64,64)) 
         if self.isjump:
             if self.onGround:
                 self.jump()
