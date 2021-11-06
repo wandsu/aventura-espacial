@@ -24,18 +24,10 @@ menu_music = 'Sounds\Take-on-me.ogg'
 clock = pygame.time.Clock()
 FPS=30
 
-#  ints
-fill = 0
-num = 0
-
 CameraX = 0
 attempts = 0
 coins = 0
 angle = 0
-
-# bg image
-bg = pygame.image.load(os.path.join("Imagens", "bg.png"))
-bg = pygame.transform.scale(bg,(800,600))
 
 lava = pygame.image.load(os.path.join("Imagens", "Lava.png"))
 lava = pygame.transform.smoothscale(lava, (32,32))
@@ -55,6 +47,13 @@ sprites = pygame.sprite.Group()
 jogador = Player(elements, (150, 150), player_sprite)
 sprites.add(jogador)
 
+def player():
+    player_sprite = pygame.sprite.Group()
+    elements = pygame.sprite.Group()
+    sprites = pygame.sprite.Group()
+    jogador = Player(elements, (150, 150), player_sprite)
+    sprites.add(jogador)
+    return sprites, jogador
 
 def text_format(message, textFont, textSize, textColor):
     newFont=pygame.font.Font(textFont, textSize)
@@ -121,6 +120,9 @@ def winner():
 atualiza_sprite = 0
 #inicio do jogo
 def level_1():
+    # bg image
+    bg = pygame.image.load(os.path.join("Imagens", "bg.png"))
+    bg = pygame.transform.scale(bg,(800,600))
     print('Game init')
     global CameraX
     global atualiza_sprite
@@ -172,10 +174,8 @@ def level_1():
         if jogador.died:
             game_over()
         
-        
         clock.tick(60)
         pygame.display.update()    
-
 
 #menu
 def main_menu():
@@ -250,11 +250,6 @@ def main_menu():
             text_rank=text_format("Rank", font, 75, red)
         else:
             text_rank = text_format("Rank", font, 75, white)
-
-        start_rect=text_start.get_rect()
-        quit_rect=text_quit.get_rect()
-        rank_rect=text_rank.get_rect()
-        sound_rect=text_sound.get_rect()
 
         screen.blit(text_start, (screen_width/2 - (-180), 200))
         screen.blit(text_quit, (screen_width/2 - (-180), 350))
