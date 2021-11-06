@@ -9,9 +9,6 @@ GRAVITY = Vector2(0, 0.86)
 alpha_surf = pygame.Surface((800,600), pygame.SRCALPHA)
 
 class Player(pygame.sprite.Sprite):
-    
-    win: bool
-    died: bool
 
     def __init__(self, platforms, pos, *groups):
         super().__init__(*groups)
@@ -34,10 +31,11 @@ class Player(pygame.sprite.Sprite):
         self.jump_amount = 15   
         self.isjump = False 
         self.vel = Vector2(0, 0) 
+        self.win = False
+        self.died = False
     
     def jump(self):
         self.vel.y = -self.jump_amount  
-        
         self.image = self.jumping
         self.image = pygame.transform.scale(self.image, (64,64)) 
 

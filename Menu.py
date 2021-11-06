@@ -7,13 +7,9 @@ from Players import *
 
 pygame.init()
 
-#Remove
-#os.environ['SDL_VIDEO_CENTERED'] = '1'
-
 screen_width=800
 screen_height=600
 screen=pygame.display.set_mode((screen_width, screen_height))
-
 
 white=(255, 255, 255)
 red=(255, 0, 0)
@@ -41,13 +37,9 @@ angle = 0
 bg = pygame.image.load(os.path.join("Imagens", "bg.png"))
 bg = pygame.transform.scale(bg,(800,600))
 
-#definindo elementos do jogo
-player_sprite = pygame.sprite.Group()
-elements = pygame.sprite.Group()
 lava = pygame.image.load(os.path.join("Imagens", "Lava.png"))
 lava = pygame.transform.smoothscale(lava, (32,32))
 end = pygame.image.load(os.path.join("Imagens", "red-end.png"))
-#end = pygame.transform.smoothscale(end, (290,570))
 coin = pygame.image.load(os.path.join("Imagens", "coin.png"))
 coin = pygame.transform.smoothscale(coin, (32, 32))
 bloco1 = pygame.image.load(os.path.join("Imagens", "Deserto1.png"))
@@ -55,6 +47,9 @@ bloco1 = pygame.transform.smoothscale(bloco1, (32, 32))
 bloco2 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 2.png"))
 bloco2 = pygame.transform.smoothscale(bloco2, (32, 32))
 
+#definindo elementos do jogo
+player_sprite = pygame.sprite.Group()
+elements = pygame.sprite.Group()
 ## definindo sprites do jogador
 sprites = pygame.sprite.Group()
 jogador = Player(elements, (150, 150), player_sprite)
@@ -64,7 +59,6 @@ sprites.add(jogador)
 def text_format(message, textFont, textSize, textColor):
     newFont=pygame.font.Font(textFont, textSize)
     newText=newFont.render(message, 0, textColor)
-
     return newText
 
 #carrega mapa do jogo
@@ -74,7 +68,6 @@ def carrega_mapa(map):
 
     for row in map:
         for col in row:
-
             if col == "0":
                 Platform1(bloco1, (x, y), elements)
             if col == "1":
@@ -92,12 +85,6 @@ def carrega_mapa(map):
         y += 32
         x = 0
 
-def vitoria():
-    return 0
-
-def derrota():
-    return 1
-
 def block_map(level_num):
     lvl = []
     with open(level_num, newline='') as csvfile:
@@ -107,7 +94,7 @@ def block_map(level_num):
     return lvl
 
 def reset():
-    global jogador, elements, player_sprite, level
+    global jogador, elements, player_sprite, level, sprites
 
     if level == 1:
         pygame.mixer.music.load(os.path.join("Sounds", "Eletro-hits.ogg"))
@@ -115,6 +102,7 @@ def reset():
     player_sprite = pygame.sprite.Group()
     elements = pygame.sprite.Group()
     jogador = Player(elements, (150, 150), player_sprite)
+    sprites.add(jogador)
     carrega_mapa(
             block_map(
                     level_num=levels[level]))
@@ -123,9 +111,17 @@ def move_map():
     for sprite in elements:
         sprite.rect.x -= CameraX
 
+def game_over():
+    reset()
+
+def winner():
+    reset()
+    main_menu
+
 atualiza_sprite = 0
 #inicio do jogo
-def game():
+def level_1():
+    print('Game init')
     global CameraX
     global atualiza_sprite
     while True:
@@ -139,12 +135,11 @@ def game():
 
         #atualiza sprite após 4 loops se o jogador não estiver pulando
         atualiza_sprite += 1
-        if atualiza_sprite % 4 == 0 and not jogador.isjump:
+        if atualiza_sprite % 5 == 0 and not jogador.isjump:
             jogador.sprite_update()
 
         sprites.update()
 
-        #
         jogador.vel.x = 5 
 
         if keys[pygame.K_UP] or keys[pygame.K_SPACE]:
@@ -173,15 +168,17 @@ def game():
 
                     jogador.jump_amount -= 1
 
-
-        #
+        #Verifica se o jogador morreu
+        if jogador.died:
+            game_over()
+        
+        
         clock.tick(60)
         pygame.display.update()    
 
 
 #menu
 def main_menu():
-
     menu=True
     selected="Iniciar"
     pygame.mixer.init()
@@ -189,10 +186,9 @@ def main_menu():
     pygame.mixer.music.play() 
     menu_estados = 0
     som = ["Som: on","Som: off"]
-    i = 0
+    set_som = 0
     som_menu = som[0]
     
-
     while menu:
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -201,16 +197,16 @@ def main_menu():
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_UP:
                     menu_estados -= 1
-                elif event.key==pygame.K_DOWN:
+                if event.key==pygame.K_DOWN:
                     menu_estados += 1
                 if event.key==pygame.K_RETURN:
                     if selected=="Iniciar":
-                        game()
+                        level_1()
                     if selected == som_menu:
-                        i+=1
-                        print(i)
-                        som_menu = som[i%2]
-                        if i%2 == 0:
+                        set_som+=1
+                        print(som[set_som%2])
+                        som_menu = som[set_som%2]
+                        if set_som%2 == 0:
                             pygame.mixer.music.play() 
                         else:
                             pygame.mixer.music.pause()
@@ -221,10 +217,13 @@ def main_menu():
                         quit()
 
         screen.blit(bg_menu, (0, 0))
+
+        #Defini item selecionado pelo 
         if menu_estados < 0:
             menu_estados = 3
         if menu_estados > 3:
             menu_estados = 0
+
         if menu_estados ==0:
             selected = "Iniciar"
         elif menu_estados == 3:
@@ -234,7 +233,7 @@ def main_menu():
         elif menu_estados == 2:
             selected = "Rank"
 
-
+        #Altera cor do item do menu que está selecionado
         if selected=="Iniciar":
             text_start=text_format("Iniciar", font, 75, red)
         else:
@@ -261,6 +260,7 @@ def main_menu():
         screen.blit(text_quit, (screen_width/2 - (-180), 350))
         screen.blit(text_sound, (screen_width/2 - (-180), 250))
         screen.blit(text_rank, (screen_width/2 - (-180), 300))
+
         pygame.display.update()
         clock.tick(FPS)
         pygame.display.set_caption("Uma Aventura Espacial")
