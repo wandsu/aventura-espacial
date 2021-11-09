@@ -181,7 +181,10 @@ def level_1():
 def ranking_screen():
     bg = pygame.image.load(os.path.join("Imagens", "fundo_ranking.jpg"))
     bg = pygame.transform.scale(bg,(800,600))
+
     text_rank=text_format("Ranking", font, 75, red)
+    menu=text_format("Menu", font, 65, red)
+    
     ranking = True
     fonteLinhas = pygame.font.Font(font, 45)
     dados = CSVReader()
@@ -189,6 +192,7 @@ def ranking_screen():
     count = 100
     screen.blit(bg, (0, 0))  
     screen.blit(text_rank, (300, 0))
+    screen.blit(menu, (600, 500))
     i = 0
     while i < len(dados) or i <= 10:
         try:
@@ -208,6 +212,9 @@ def ranking_screen():
             if event.type==pygame.QUIT:
                 pygame.quit()
                 quit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_RETURN:
+                    main_menu()
 
         pygame.display.update()
         clock.tick(FPS)
@@ -246,7 +253,6 @@ def main_menu():
                         else:
                             pygame.mixer.music.pause()
                     if selected=="Rank":
-                        print("Rank")
                         ranking_screen()
                     if selected=="Sair":
                         pygame.quit()
