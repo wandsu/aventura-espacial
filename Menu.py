@@ -1,6 +1,7 @@
 import os
 import csv
 import pygame
+from ranking import *
 from pygame.locals import *
 
 from Players import *
@@ -177,6 +178,40 @@ def level_1():
         clock.tick(60)
         pygame.display.update()    
 
+def ranking_screen():
+    bg = pygame.image.load(os.path.join("Imagens", "fundo_ranking.jpg"))
+    bg = pygame.transform.scale(bg,(800,600))
+    text_rank=text_format("Ranking", font, 75, red)
+    ranking = True
+    fonteLinhas = pygame.font.Font(font, 45)
+    dados = CSVReader()
+
+    count = 100
+    screen.blit(bg, (0, 0))  
+    screen.blit(text_rank, (300, 0))
+    i = 0
+    while i < len(dados) or i <= 10:
+        try:
+            texto = (dados[i][0])
+            numero = (dados[i][1])
+            text = fonteLinhas.render(texto, True, white)
+            pontos = fonteLinhas.render(numero, True, white)
+            screen.blit(text,(150,count))
+            screen.blit(pontos,(550,count))
+            count += 45
+        except(IndexError):
+            texto +=('-------------------------\n')
+        i += 1
+    
+    while ranking:
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        pygame.display.update()
+        clock.tick(FPS)
+
 #menu
 def main_menu():
     menu=True
@@ -212,6 +247,7 @@ def main_menu():
                             pygame.mixer.music.pause()
                     if selected=="Rank":
                         print("Rank")
+                        ranking_screen()
                     if selected=="Sair":
                         pygame.quit()
                         quit()
