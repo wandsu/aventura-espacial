@@ -15,12 +15,13 @@ screen=pygame.display.set_mode((screen_width, screen_height))
 white=(255, 255, 255)
 red=(255, 0, 0)
 
-font = "fonts\Retro.ttf"
+font = "fonts/Retro.ttf"
 
-bg_menu = pygame.image.load("imagens\menu.jpg")
+bg_menu = pygame.image.load("Imagens/menu.jpg")
 bg_menu = pygame.transform.scale(bg_menu, (800, 600))
 
-menu_music = 'Sounds\Take-on-me.ogg'
+menu_music = 'Sounds/Take-on-me.ogg'
+fase_um_music = 'Sounds/Eletro-hits.ogg'
 
 clock = pygame.time.Clock()
 FPS=30
@@ -35,10 +36,22 @@ lava = pygame.transform.smoothscale(lava, (32,32))
 end = pygame.image.load(os.path.join("Imagens", "red-end.png"))
 coin = pygame.image.load(os.path.join("Imagens", "coin.png"))
 coin = pygame.transform.smoothscale(coin, (32, 32))
-bloco1 = pygame.image.load(os.path.join("Imagens", "Deserto1.png"))
+bloco1 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 1.png"))
 bloco1 = pygame.transform.smoothscale(bloco1, (32, 32))
 bloco2 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 2.png"))
 bloco2 = pygame.transform.smoothscale(bloco2, (32, 32))
+bloco3 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 3.png"))
+bloco3 = pygame.transform.smoothscale(bloco3, (32, 32))
+bloco4 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 4.png"))
+bloco4 = pygame.transform.smoothscale(bloco4, (32, 32))
+bloco5 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 5.png"))
+bloco5 = pygame.transform.smoothscale(bloco5, (32, 32))
+bloco6 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 6.png"))
+bloco6 = pygame.transform.smoothscale(bloco6, (32, 32))
+bloco7 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 7.png"))
+bloco7 = pygame.transform.smoothscale(bloco7, (32, 32))
+bloco8 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 8.png"))
+bloco8 = pygame.transform.smoothscale(bloco8, (32, 32))
 
 #definindo elementos do jogo
 player_sprite = pygame.sprite.Group()
@@ -68,15 +81,34 @@ def carrega_mapa(map):
 
     for row in map:
         for col in row:
-            if col == "0":
-                Platform1(bloco1, (x, y), elements)
             if col == "1":
+                Platform1(bloco1, (x, y), elements)
+
+            if col == "2":
                 Platform2(bloco2, (x,y), elements)
+
+            if col == "3":
+                Platform2(bloco3, (x,y), elements)
+
+            if col == "4":
+                Platform2(bloco4, (x,y), elements)
+
+            if col == "5":
+                Platform2(bloco5, (x,y), elements)
+
+            if col == "6":
+                Platform2(bloco6, (x,y), elements)
+
+            if col == "7":
+                Platform2(bloco7, (x,y), elements)
+
+            if col == "8":
+                Platform2(bloco8, (x,y), elements)
 
             if col == "Coin":
                 Coin(coin, (x, y), elements)
 
-            if col == "Lava":
+            if col == "L":
                 Lava(lava, (x, y), elements)
 
             if col == "End":
@@ -122,6 +154,8 @@ atualiza_sprite = 0
 #inicio do jogo
 def level_1():
     # bg image
+    pygame.mixer.music.load(fase_um_music)
+    pygame.mixer.music.play()
     bg = pygame.image.load(os.path.join("Imagens", "bg.png"))
     bg = pygame.transform.scale(bg,(800,600))
     print('Game init')
@@ -143,7 +177,7 @@ def level_1():
 
         sprites.update()
 
-        jogador.vel.x = 5 
+        jogador.vel.x = 10
 
         if keys[pygame.K_UP] or keys[pygame.K_SPACE]:
             jogador.isjump = True

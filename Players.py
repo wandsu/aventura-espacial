@@ -5,7 +5,7 @@ import random
 
 #gravidade
 color = lambda: tuple([random.randint(0, 255) for i in range(3)])  # lambda function for random color, not a constant.
-GRAVITY = Vector2(0, 0.86) 
+GRAVITY = Vector2(0, 1) 
 alpha_surf = pygame.Surface((800,600), pygame.SRCALPHA)
 
 class Player(pygame.sprite.Sprite):
