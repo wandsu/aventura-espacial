@@ -3,6 +3,9 @@ from pygame.math import Vector2
 from pygame.draw import rect
 import random
 
+pygame.mixer.init()
+jump_sound = pygame.mixer.Sound('Sounds\Jump.ogg')
+
 #gravidade
 color = lambda: tuple([random.randint(0, 255) for i in range(3)])  # lambda function for random color, not a constant.
 GRAVITY = Vector2(0, 1) 
@@ -28,13 +31,15 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (64,64)) 
 
         self.rect = self.image.get_rect(center=pos)
-        self.jump_amount = 15   
+        self.jump_amount = 15  
+        self.jump_sound = jump_sound    
         self.isjump = False 
         self.vel = Vector2(0, 0) 
         self.win = False
         self.died = False
     
     def jump(self):
+        self.jump_sound.play()
         self.vel.y = -self.jump_amount  
         self.image = self.jumping
         self.image = pygame.transform.scale(self.image, (64,64)) 

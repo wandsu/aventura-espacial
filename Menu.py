@@ -24,7 +24,7 @@ menu_music = 'Sounds/Take-on-me.ogg'
 fase_um_music = 'Sounds/Eletro-hits.ogg'
 
 clock = pygame.time.Clock()
-FPS=30
+FPS=60
 
 CameraX = 0
 attempts = 0
@@ -181,6 +181,10 @@ def level_1():
 
         if keys[pygame.K_UP] or keys[pygame.K_SPACE]:
             jogador.isjump = True
+        if keys[pygame.K_ESCAPE]:
+            pygame.quit()
+            exit()
+
 
 
         CameraX = jogador.vel.x  
@@ -271,6 +275,9 @@ def main_menu():
                 pygame.quit()
                 quit()
             if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
                 if event.key==pygame.K_UP:
                     menu_estados -= 1
                 if event.key==pygame.K_DOWN:
