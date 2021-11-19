@@ -35,7 +35,7 @@ lava = pygame.image.load(os.path.join("Imagens", "Lava.png"))
 lava = pygame.transform.smoothscale(lava, (32,32))
 end = pygame.image.load(os.path.join("Imagens", "red-end.png"))
 coin = pygame.image.load(os.path.join("Imagens", "coin.png"))
-coin = pygame.transform.smoothscale(coin, (32, 32))
+coin = pygame.transform.smoothscale(coin, (64, 64))
 bloco1 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 1.png"))
 bloco1 = pygame.transform.smoothscale(bloco1, (32, 32))
 bloco2 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 2.png"))
@@ -88,30 +88,30 @@ def carrega_mapa(map):
                 Platform2(bloco2, (x,y), elements)
 
             if col == "3":
-                Platform2(bloco3, (x,y), elements)
+                Platform1(bloco3, (x,y), elements)
 
             if col == "4":
-                Platform2(bloco4, (x,y), elements)
+                Platform1(bloco4, (x,y), elements)
 
             if col == "5":
-                Platform2(bloco5, (x,y), elements)
+                Platform1(bloco5, (x,y), elements)
 
             if col == "6":
-                Platform2(bloco6, (x,y), elements)
+                Platform1(bloco6, (x,y), elements)
 
             if col == "7":
-                Platform2(bloco7, (x,y), elements)
+                Platform1(bloco7, (x,y), elements)
 
             if col == "8":
-                Platform2(bloco8, (x,y), elements)
+                Platform1(bloco8, (x,y), elements)
 
-            if col == "Coin":
+            if col == "C":
                 Coin(coin, (x, y), elements)
 
             if col == "L":
                 Lava(lava, (x, y), elements)
 
-            if col == "End":
+            if col == "E":
                 End(end, (x, y), elements)
             x += 32
         y += 32
@@ -170,7 +170,7 @@ def level_1():
 
         sprites.draw(screen)
 
-        #atualiza sprite após 4 loops se o jogador não estiver pulando
+        # atualiza sprite após 4 loops se o jogador não estiver pulando
         atualiza_sprite += 1
         if atualiza_sprite % 5 == 0 and not jogador.isjump:
             jogador.sprite_update()
@@ -184,8 +184,6 @@ def level_1():
         if keys[pygame.K_ESCAPE]:
             pygame.quit()
             exit()
-
-
 
         CameraX = jogador.vel.x  
         move_map()  
@@ -212,8 +210,11 @@ def level_1():
         #Verifica se o jogador morreu
         if jogador.died:
             game_over()
+
+        if jogador.win:
+            game_over()
         
-        clock.tick(60)
+        clock.tick(FPS)
         pygame.display.update()    
 
 def ranking_screen():
