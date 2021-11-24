@@ -26,7 +26,7 @@ def organizaDados(dados):
     return lista_nome, lista_pontos
 
 def CSVWriter(nome,pontos):
-    with open('file.csv','a',newline = '') as csvfile:
+    with open('rankingfile.csv','a',newline = '') as csvfile:
         escritor = csv.writer(csvfile, delimiter='\t')
         escritor.writerow([nome, pontos])
         csvfile.close()
