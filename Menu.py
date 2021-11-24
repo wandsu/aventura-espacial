@@ -61,6 +61,8 @@ sprites = pygame.sprite.Group()
 jogador = Player(elements, (150, 150), player_sprite)
 sprites.add(jogador)
 
+pontuacao = 0
+
 def player():
     player_sprite = pygame.sprite.Group()
     elements = pygame.sprite.Group()
@@ -143,12 +145,68 @@ def move_map():
     for sprite in elements:
         sprite.rect.x -= CameraX
 
-def game_over():
-    reset()
+def game_over(pontuacao):
+    bg = pygame.image.load(os.path.join("Imagens", "fundo_ranking.jpg"))
+    bg = pygame.transform.scale(bg,(800,600))
+    text_title = text_format("Game Over", font, 75, red)
+    text_input = text_format("Digite o seu nome:", font, 40, white)
+    text_caracter = text_format("caracters: 10", font, 40, white)
+    player_name = ""
+    player_name_input = text_format(player_name, font, 25, white)
+    max_text = 10
+    count_caracters = 0
+    
+    screen.blit(bg, (0, 0)) 
+    screen.blit(text_title, ((280, 0)))
+    
+    textbox = pygame.Rect(300,300,200,30)
+    pygame.draw.rect(screen, white, textbox, 2)
+
+    while True:
+        print(count_caracters)
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_RETURN:
+                    if player_name != "":
+                        CSVWriter(player_name,pontuacao)
+                    ranking_screen()
+                if event.key==pygame.K_BACKSPACE:
+                    player_name = player_name[:-1]
+                    if count_caracters  > 0:
+                        count_caracters -= 1
+                else:
+                    if count_caracters < max_text:
+                        player_name += event.unicode
+                        count_caracters += 1
+                        
+        
+        pygame.draw.rect(screen, white, textbox, 2)
+        player_name_input = text_format(player_name, font, 25, white)
+        text_caracter = text_format(f"caracters: {max_text-count_caracters}", font, 40, white)
+        
+        screen.blit(bg, (0, 0)) 
+        screen.blit(text_title, ((280, 0)))
+        screen.blit(text_title, ((280, 0)))
+        screen.blit(text_input, ((280, 250)))
+        screen.blit(text_caracter, ((350, 350)))
+        screen.blit(player_name_input, ((305, 305)))
+        pygame.draw.rect(screen, white, textbox, 2)
+
+        pygame.display.update()
+        clock.tick(30)
 
 def winner():
     reset()
     main_menu
+
+def draw_score(pontuacao, jogador):
+    score = text_format(f"Score: {pontuacao//10 + jogador.coins * 10}", font, 30, white)
+    return score
+    
+
 
 atualiza_sprite = 0
 #inicio do jogo
@@ -161,15 +219,17 @@ def level_1():
     print('Game init')
     global CameraX
     global atualiza_sprite
+    global pontuacao
+
     while True:
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 exit()
-
+        
         sprites.draw(screen)
-
+        
         # atualiza sprite após 4 loops se o jogador não estiver pulando
         atualiza_sprite += 1
         if atualiza_sprite % 5 == 0 and not jogador.isjump:
@@ -189,6 +249,9 @@ def level_1():
         move_map()  
 
         screen.blit(bg, (0, 0))  
+        score = draw_score(pontuacao, jogador)
+        screen.blit(score, (0, 0))
+        pontuacao += 1
 
 
         player_sprite.draw(screen)  
@@ -209,10 +272,11 @@ def level_1():
 
         #Verifica se o jogador morreu
         if jogador.died:
-            game_over()
+
+            game_over(pontuacao//10 + jogador.coins * 10)
 
         if jogador.win:
-            game_over()
+            game_over(pontuacao//10 + jogador.coins * 10)
         
         clock.tick(FPS)
         pygame.display.update()    
