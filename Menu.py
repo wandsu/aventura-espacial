@@ -15,15 +15,16 @@ screen=pygame.display.set_mode((screen_width, screen_height))
 white=(255, 255, 255)
 red=(255, 0, 0)
 
-font = "fonts\Retro.ttf"
+font = "fonts/Retro.ttf"
 
-bg_menu = pygame.image.load("imagens\menu.jpg")
+bg_menu = pygame.image.load("Imagens/menu.jpg")
 bg_menu = pygame.transform.scale(bg_menu, (800, 600))
 
-menu_music = 'Sounds\Take-on-me.ogg'
+menu_music = 'Sounds/Take-on-me.ogg'
+fase_um_music = 'Sounds/Eletro-hits.ogg'
 
 clock = pygame.time.Clock()
-FPS=30
+FPS=60
 
 CameraX = 0
 attempts = 0
@@ -34,11 +35,23 @@ lava = pygame.image.load(os.path.join("Imagens", "Lava.png"))
 lava = pygame.transform.smoothscale(lava, (32,32))
 end = pygame.image.load(os.path.join("Imagens", "red-end.png"))
 coin = pygame.image.load(os.path.join("Imagens", "coin.png"))
-coin = pygame.transform.smoothscale(coin, (32, 32))
-bloco1 = pygame.image.load(os.path.join("Imagens", "Deserto1.png"))
+coin = pygame.transform.smoothscale(coin, (64, 64))
+bloco1 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 1.png"))
 bloco1 = pygame.transform.smoothscale(bloco1, (32, 32))
 bloco2 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 2.png"))
 bloco2 = pygame.transform.smoothscale(bloco2, (32, 32))
+bloco3 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 3.png"))
+bloco3 = pygame.transform.smoothscale(bloco3, (32, 32))
+bloco4 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 4.png"))
+bloco4 = pygame.transform.smoothscale(bloco4, (32, 32))
+bloco5 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 5.png"))
+bloco5 = pygame.transform.smoothscale(bloco5, (32, 32))
+bloco6 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 6.png"))
+bloco6 = pygame.transform.smoothscale(bloco6, (32, 32))
+bloco7 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 7.png"))
+bloco7 = pygame.transform.smoothscale(bloco7, (32, 32))
+bloco8 = pygame.image.load(os.path.join("Imagens", "Deserto Sheet 8.png"))
+bloco8 = pygame.transform.smoothscale(bloco8, (32, 32))
 
 #definindo elementos do jogo
 player_sprite = pygame.sprite.Group()
@@ -68,18 +81,37 @@ def carrega_mapa(map):
 
     for row in map:
         for col in row:
-            if col == "0":
-                Platform1(bloco1, (x, y), elements)
             if col == "1":
+                Platform1(bloco1, (x, y), elements)
+
+            if col == "2":
                 Platform2(bloco2, (x,y), elements)
 
-            if col == "Coin":
+            if col == "3":
+                Platform1(bloco3, (x,y), elements)
+
+            if col == "4":
+                Platform1(bloco4, (x,y), elements)
+
+            if col == "5":
+                Platform1(bloco5, (x,y), elements)
+
+            if col == "6":
+                Platform1(bloco6, (x,y), elements)
+
+            if col == "7":
+                Platform1(bloco7, (x,y), elements)
+
+            if col == "8":
+                Platform1(bloco8, (x,y), elements)
+
+            if col == "C":
                 Coin(coin, (x, y), elements)
 
-            if col == "Lava":
+            if col == "L":
                 Lava(lava, (x, y), elements)
 
-            if col == "End":
+            if col == "E":
                 End(end, (x, y), elements)
             x += 32
         y += 32
@@ -122,6 +154,8 @@ atualiza_sprite = 0
 #inicio do jogo
 def level_1():
     # bg image
+    pygame.mixer.music.load(fase_um_music)
+    pygame.mixer.music.play()
     bg = pygame.image.load(os.path.join("Imagens", "bg.png"))
     bg = pygame.transform.scale(bg,(800,600))
     print('Game init')
@@ -136,18 +170,20 @@ def level_1():
 
         sprites.draw(screen)
 
-        #atualiza sprite após 4 loops se o jogador não estiver pulando
+        # atualiza sprite após 4 loops se o jogador não estiver pulando
         atualiza_sprite += 1
         if atualiza_sprite % 5 == 0 and not jogador.isjump:
             jogador.sprite_update()
 
         sprites.update()
 
-        jogador.vel.x = 5 
+        jogador.vel.x = 10
 
         if keys[pygame.K_UP] or keys[pygame.K_SPACE]:
             jogador.isjump = True
-
+        if keys[pygame.K_ESCAPE]:
+            pygame.quit()
+            exit()
 
         CameraX = jogador.vel.x  
         move_map()  
@@ -174,8 +210,11 @@ def level_1():
         #Verifica se o jogador morreu
         if jogador.died:
             game_over()
+
+        if jogador.win:
+            game_over()
         
-        clock.tick(60)
+        clock.tick(FPS)
         pygame.display.update()    
 
 def ranking_screen():
@@ -237,6 +276,9 @@ def main_menu():
                 pygame.quit()
                 quit()
             if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
                 if event.key==pygame.K_UP:
                     menu_estados -= 1
                 if event.key==pygame.K_DOWN:

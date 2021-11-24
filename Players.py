@@ -3,9 +3,12 @@ from pygame.math import Vector2
 from pygame.draw import rect
 import random
 
+pygame.mixer.init()
+# jump_sound = pygame.mixer.Sound('Sounds/Jump.ogg')
+
 #gravidade
 color = lambda: tuple([random.randint(0, 255) for i in range(3)])  # lambda function for random color, not a constant.
-GRAVITY = Vector2(0, 0.86) 
+GRAVITY = Vector2(0, 1) 
 alpha_surf = pygame.Surface((800,600), pygame.SRCALPHA)
 
 class Player(pygame.sprite.Sprite):
@@ -24,17 +27,20 @@ class Player(pygame.sprite.Sprite):
         self.onGround = False
         self.isRunning = False
         self.atual = 0
+        self.coins = 0
         self.image = self.sprites[self.atual]
         self.image = pygame.transform.scale(self.image, (64,64)) 
 
         self.rect = self.image.get_rect(center=pos)
-        self.jump_amount = 15   
+        self.jump_amount = 15  
+        # self.jump_sound = jump_sound
         self.isjump = False 
         self.vel = Vector2(0, 0) 
         self.win = False
         self.died = False
     
     def jump(self):
+        # self.jump_sound.play()
         self.vel.y = -self.jump_amount  
         self.image = self.jumping
         self.image = pygame.transform.scale(self.image, (64,64)) 
@@ -66,8 +72,6 @@ class Player(pygame.sprite.Sprite):
         self.collide(self.vel.y, self.platforms)
     
     def collide(self, yvel, platforms):
-        global coins
-
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
                 if isinstance(p, End):
@@ -77,7 +81,7 @@ class Player(pygame.sprite.Sprite):
                     self.died = True
 
                 if isinstance(p, Coin):
-                    coins += 1
+                    self.coins += 1
                     p.rect.x = 0
                     p.rect.y = 0
 
