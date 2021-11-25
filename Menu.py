@@ -33,6 +33,8 @@ angle = 0
 
 lava = pygame.image.load(os.path.join("Imagens", "Lava.png"))
 lava = pygame.transform.smoothscale(lava, (32,32))
+lava_invertida = pygame.image.load(os.path.join("Imagens", "Lava 3.png"))
+lava_invertida = pygame.transform.smoothscale(lava_invertida, (32,32))
 end = pygame.image.load(os.path.join("Imagens", "red-end.png"))
 coin = pygame.image.load(os.path.join("Imagens", "coin.png"))
 coin = pygame.transform.smoothscale(coin, (64, 64))
@@ -113,6 +115,9 @@ def carrega_mapa(map):
             if col == "L":
                 Lava(lava, (x, y), elements)
 
+            if col == 'l':
+                Lava(lava_invertida, (x, y), elements)
+
             if col == "E":
                 End(end, (x, y), elements)
             x += 32
@@ -128,7 +133,9 @@ def block_map(level_num):
     return lvl
 
 def reset():
-    global jogador, elements, player_sprite, level, sprites
+    global jogador, elements, player_sprite, level, sprites, pontuacao
+
+    pontuacao = 0
 
     if level == 1:
         pygame.mixer.music.load(os.path.join("Sounds", "Eletro-hits.ogg"))
@@ -146,6 +153,7 @@ def move_map():
         sprite.rect.x -= CameraX
 
 def game_over(pontuacao):
+    pygame.mixer.music.stop()
     bg = pygame.image.load(os.path.join("Imagens", "fundo_ranking.jpg"))
     bg = pygame.transform.scale(bg,(800,600))
     text_title = text_format("Game Over", font, 75, red)
@@ -163,7 +171,6 @@ def game_over(pontuacao):
     pygame.draw.rect(screen, white, textbox, 2)
 
     while True:
-        print(count_caracters)
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 pygame.quit()
@@ -196,7 +203,7 @@ def game_over(pontuacao):
         pygame.draw.rect(screen, white, textbox, 2)
 
         pygame.display.update()
-        clock.tick(30)
+        clock.tick(60)
 
 def winner():
     reset()
@@ -211,6 +218,7 @@ def draw_score(pontuacao, jogador):
 atualiza_sprite = 0
 #inicio do jogo
 def level_1():
+    reset()
     # bg image
     pygame.mixer.music.load(fase_um_music)
     pygame.mixer.music.play()
@@ -267,16 +275,14 @@ def level_1():
                     jogador.jump_amount += 1
 
                 if event.key == pygame.K_1:
-
                     jogador.jump_amount -= 1
 
         #Verifica se o jogador morreu
         if jogador.died:
-
-            game_over(pontuacao//10 + jogador.coins * 10)
+            game_over(pontuacao//10 + jogador.coins * 100)
 
         if jogador.win:
-            game_over(pontuacao//10 + jogador.coins * 10)
+            game_over(pontuacao//10 + jogador.coins * 100)
         
         clock.tick(FPS)
         pygame.display.update()    
